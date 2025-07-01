@@ -35,6 +35,10 @@ class BluetoothStateManager @Inject constructor() {
     private val _deviceDisconnected = MutableStateFlow<ConnectionStatusInfo?>(null)
     val deviceDisconnected: StateFlow<ConnectionStatusInfo?> = _deviceDisconnected
 
+    // --- Datos ---
+    private val _actionReceived = MutableStateFlow<BleAction?>(null)
+    val actionReceived: StateFlow<BleAction?> = _actionReceived
+
     // Funciones para que BluetoothService actualice (sin lógica de permisos aquí)
     fun postScanStarted() { _scanStarted.value = Unit }
     fun postScanResults(devicesInfo: List<BleDevice>) { _scanResults.value = devicesInfo }
@@ -51,6 +55,11 @@ class BluetoothStateManager @Inject constructor() {
     fun postDeviceDisconnected(displayName: String?) {
         _deviceDisconnected.value = ConnectionStatusInfo(displayName)
     }
+
+    fun postDataReceived(bleAction: BleAction) {
+        _actionReceived.value = bleAction
+    }
+
 }
 
 

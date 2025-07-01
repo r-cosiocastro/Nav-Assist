@@ -6,6 +6,7 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+kotlinxCoroutinesPlayServices = "1.10.2"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 composeBom = "2024.09.00"
@@ -14,12 +15,18 @@ hilt = "2.56.2"
 hilt-compose = "1.2.0"
 hilt_navigation = "1.2.0"
 bluetooth = "1.0.0-alpha02"
+materialIconsExtended = "1.7.8"
+navigationCompose = "2.9.0"
 retrofit = "3.0.0"
 recyclerview = "1.4.0"
+translate = "17.0.3"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsExtended" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -37,6 +44,7 @@ hilt-android = { module = "com.google.dagger:hilt-android", version = "2.56.2" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version = "2.56.2" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose" , version.ref = "hilt_navigation" }
 hilt-navigation = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hilt_navigation" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
 lifecycle-viewmodel-ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1"
 fragment-ktx = "androidx.fragment:fragment-ktx:1.8.8"
 androidx-bluetooth = { group = "androidx.bluetooth", name = "bluetooth", version.ref = "bluetooth" }
@@ -45,6 +53,7 @@ retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.r
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version = "4.12.0" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" } # OkHttp es una dependencia de Retrofit, esta es para el interceptor
+translate = { module = "com.google.mlkit:translate", version.ref = "translate" }
 
 
 [plugins]

@@ -46,13 +46,13 @@ class BluetoothService : Service() {
     lateinit var bluetoothStateManager: BluetoothStateManager
 
     companion object {
-        const val ACTION_CONNECT_BLE = "com.dasc.pecustrack.ACTION_CONNECT_BLE"
-        const val ACTION_DISCONNECT_BLE = "com.dasc.pecustrack.ACTION_DISCONNECT_BLE"
+        const val ACTION_CONNECT_BLE = "com.dasc.auxiliovisionis.ACTION_CONNECT_BLE"
+        const val ACTION_DISCONNECT_BLE = "com.dasc.auxiliovisionis.ACTION_DISCONNECT_BLE"
         const val ACTION_REQUEST_CURRENT_STATUS =
-            "com.dasc.pecustrack.ACTION_REQUEST_CURRENT_STATUS"
-        const val ACTION_START_SCAN = "com.dasc.pecustrack.ACTION_START_SCAN"
-        const val ACTION_STOP_SCAN = "com.dasc.pecustrack.ACTION_STOP_SCAN"
-        const val EXTRA_DEVICE_ADDRESS = "com.dasc.pecustrack.EXTRA_DEVICE_ADDRESS"
+            "com.dasc.auxiliovisionis.ACTION_REQUEST_CURRENT_STATUS"
+        const val ACTION_START_SCAN = "com.dasc.auxiliovisionis.ACTION_START_SCAN"
+        const val ACTION_STOP_SCAN = "com.dasc.auxiliovisionis.ACTION_STOP_SCAN"
+        const val EXTRA_DEVICE_ADDRESS = "com.dasc.auxiliovisionis.EXTRA_DEVICE_ADDRESS"
 
         private const val NOTIFICATION_CHANNEL_ID = "BluetoothServiceChannel"
         private const val NOTIFICATION_ID = 1
@@ -412,9 +412,7 @@ class BluetoothService : Service() {
 
                 isAttemptingAutoReconnect = true
                 lastAttemptedDeviceAddressForAutoReconnect = lastDeviceAddress
-                if (nameForInitialToast != null) {
-                    sendReconnectAttemptingBroadcast(nameForInitialToast)
-                }
+                sendReconnectAttemptingBroadcast(nameForInitialToast)
                 attemptAutoReconnectToDevice(lastDeviceAddress) // autoConnect = true o false según tu elección
             }
         }
@@ -828,6 +826,7 @@ class BluetoothService : Service() {
     }
 
     private val gattCallback = object : BluetoothGattCallback() {
+        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             val deviceAddress = gatt.device.address
             val deviceNameForNotification =
@@ -840,6 +839,7 @@ class BluetoothService : Service() {
                         "Conectado a GATT server $deviceNameForNotification ($deviceAddress)."
                     )
                     connectedGatt = gatt // Asegurar que tenemos la instancia correcta
+                    bluetoothGatt?.requestMtu(185)
                     currentDeviceAddress = deviceAddress // Confirmar
                     // Guardar el nombre resuelto si BLUETOOTH_CONNECT está disponible
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -1145,19 +1145,20 @@ class BluetoothService : Service() {
             charUuid: String,
             value: ByteArray
         ) {
-            val dataString =
-                String(value, Charsets.UTF_8).trim()
-            val parts =
-                dataString.split(',').map { it.trim() } // Dividir por coma y quitar espacios
-            if (parts.size == 3) {
+            val dataString = String(value, Charsets.UTF_8).trim()
+            Log.d("BluetoothService_BLE", "Datos recibidos de $deviceAddress: $dataString")
+            val parts = dataString.split(',').map { it.trim() } // Dividir por coma y quitar espacios
+            if (parts.size == 4) {
                 try {
-                    val idDispositivo = parts[0].toInt()
+                    val idAction = parts[0].toInt()
                     val latitud = parts[1].toDouble()
                     val longitud = parts[2].toDouble()
+                    val objectDescription = parts[3].toString()
 
                     Log.d(
                         "BluetoothService_BLE",
-                        "Parseado: ID=$idDispositivo, Lat=$latitud, Lon=$longitud"
+                        "Parseado: ID_Action=$idAction, Lat=$latitud, Lon=$longitud" +
+                                ", Desc='$objectDescription' from $deviceAddress"
                     )
 
                     serviceScope.launch {
@@ -1165,6 +1166,10 @@ class BluetoothService : Service() {
                         TODO: Aquí se obtendrá la ubicación desde el ESP32 y lanzará un evento TTS para que el usuario escuche la ubicación.
                         */
 
+                        bluetoothStateManager.postDataReceived(
+                            createBleAction(
+                                idAction, latitud, longitud, objectDescription
+                            ))
                     }
 
                 } catch (e: NumberFormatException) {
@@ -1202,6 +1207,22 @@ class BluetoothService : Service() {
                 )
             }
         }
+    }
+
+    fun createBleAction(actionInt: Int, lat: Double, lon: Double, description: String): BleAction {
+        val actionType: ActionType = when (actionInt) {
+            0 -> ActionType.NO_ACTION
+            1 -> ActionType.TALK_LOCATION
+            2 -> ActionType.TALK_OBJECT
+            3 -> ActionType.SEND_LOCATION_SMS
+            else -> {
+                println("Error: Int $actionInt no corresponde a un ActionType válido.")
+                ActionType.NO_ACTION
+            }
+        }
+
+        return BleAction(actionType, lat, lon, description)
+
     }
 
     // Helper para convertir ByteArray a HexString para logging

@@ -3,4 +3,7 @@
     <string name="bluetooth_service_conectado">Dispositivo bluetooth conectado</string>
     <string name="bluetooth_service_channel_name">Servicio Bluetooth</string>
     <string name="bluetooth_service_channel_description">Notificaciones del servicio bluetooth</string>
+    <string name="tts_service_conectado">Servicio de Texto a Voz listo</string>
+    <string name="tts_service_channel_name">Servicio Texto a Voz</string>
+    <string name="tts_service_channel_description">Notificaciones del servicio Texto a Voz</string>
 </resources>

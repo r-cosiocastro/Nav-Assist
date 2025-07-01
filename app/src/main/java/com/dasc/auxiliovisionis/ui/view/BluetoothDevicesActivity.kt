@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import com.dasc.auxiliovisionis.bluetooth.BluetoothService
-import com.dasc.auxiliovisionis.ui.view.components.BluetoothDevicesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,7 +19,7 @@ class BluetoothDevicesActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                BluetoothDevicesScreen()
+                //BluetoothDevicesScreen()
             }
         }
     }

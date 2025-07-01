@@ -8,8 +8,7 @@ data class ReverseGeocodingResponse(
 
 data class Address(
     val road: String?,
-    val house_number: String?,
-    val suburb: String?,
+    val neighbourhood: String?,
     val city: String?,
     val state: String?,
     val postcode: String?,

@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BluetoothViewModel @Inject constructor(
     application: Application,
-    private val bluetoothStateManager: BluetoothStateManager
+    private val bluetoothStateManager: BluetoothStateManager,
 ) : AndroidViewModel(application) {
 
     val scannedBleDeviceItems: StateFlow<List<BleDevice>> = bluetoothStateManager.scanResults
@@ -43,7 +43,6 @@ class BluetoothViewModel @Inject constructor(
         .map { it != null }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    // Acciones igual, sin cambios
     fun startScan() {
         Log.d("BluetoothViewModel_ACTION", "Solicitando inicio de escaneo al servicio.")
         val intent = Intent(getApplication(), BluetoothService::class.java).apply {

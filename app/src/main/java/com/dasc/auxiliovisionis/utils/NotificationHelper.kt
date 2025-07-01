@@ -17,6 +17,8 @@ object NotificationHelper {
     // (Puedes mover las constantes de BluetoothService aquí si son exclusivamente para notificaciones)
     const val BLUETOOTH_SERVICE_CHANNEL_ID = "BluetoothServiceChannel"
     const val BLUETOOTH_SERVICE_NOTIFICATION_ID = 1
+    const val TTS_SERVICE_CHANNEL_ID = "TTSServiceChannel"
+    const val TTS_SERVICE_NOTIFICATION_ID = 3
 
 
     const val DATA_UPDATE_CHANNEL_ID = "DataUpdateChannel"
@@ -141,6 +143,27 @@ object NotificationHelper {
             title = context.getString(R.string.bluetooth_service_conectado), // Usa recursos de strings
             contentText = statusText,
             smallIconResId = R.drawable.ic_bluetooth_connected, // Ícono específico
+            // pendingIntent = pendingIntent, // Opcional
+            autoCancel = false, // Las notificaciones de servicio en primer plano no suelen ser auto-cancelables
+            onGoing = true // Esencial para servicios en primer plano
+        )
+    }
+
+    fun createTTSServiceNotification(context: Context, statusText: String): Notification {
+        // Ejemplo de PendingIntent para abrir tu actividad de Bluetooth
+        // val intent = Intent(context, YourBluetoothActivity::class.java).apply {
+        //     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        // }
+        // val pendingIntent = PendingIntent.getActivity(
+        //     context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        // )
+
+        return createBasicNotification(
+            context = context,
+            channelId = TTS_SERVICE_CHANNEL_ID,
+            title = context.getString(R.string.tts_service_conectado), // Usa recursos de strings
+            contentText = statusText,
+            smallIconResId = R.drawable.ic_voice, // Ícono específico
             // pendingIntent = pendingIntent, // Opcional
             autoCancel = false, // Las notificaciones de servicio en primer plano no suelen ser auto-cancelables
             onGoing = true // Esencial para servicios en primer plano
