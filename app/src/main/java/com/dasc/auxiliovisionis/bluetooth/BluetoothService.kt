@@ -839,8 +839,8 @@ class BluetoothService : Service() {
                         "Conectado a GATT server $deviceNameForNotification ($deviceAddress)."
                     )
                     connectedGatt = gatt // Asegurar que tenemos la instancia correcta
-                    bluetoothGatt?.requestMtu(185)
                     currentDeviceAddress = deviceAddress // Confirmar
+                    gatt.requestMtu(185)
                     // Guardar el nombre resuelto si BLUETOOTH_CONNECT está disponible
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         if (ActivityCompat.checkSelfPermission(
@@ -1205,6 +1205,76 @@ class BluetoothService : Service() {
                     "BluetoothService_BLE",
                     "Fallo al leer característica de $deviceName ${characteristic.uuid}, status: $status"
                 )
+            }
+        }
+
+        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+        override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
+            super.onMtuChanged(gatt, mtu, status)
+            val deviceName = try {
+                gatt.device.name ?: gatt.device.address
+            } catch (e: SecurityException) {
+                gatt.device.address
+            }
+
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.i("BluetoothService_GATT", "MTU cambiada a $mtu para $deviceName")
+                // Ahora que la MTU ha sido negociada (o se intentó),
+                // es el momento de descubrir servicios.
+                Log.d(
+                    "BluetoothService_GATT",
+                    "MTU confirmada, iniciando descubrimiento de servicios para $deviceName"
+                )
+                if (!gatt.discoverServices()) {
+                    Log.e(
+                        "BluetoothService_GATT",
+                        "No se pudo iniciar el descubrimiento de servicios después del cambio de MTU para $deviceName."
+                    )
+                    // Aquí podrías querer desconectar o manejar el error
+                    // bluetoothStateManager.postConnectionFailed(deviceName, "Fallo al iniciar descubrimiento de servicios post-MTU")
+                    // closeGattConnection(gatt.device.address) // o una función similar para limpiar
+                } else {
+                    // Aquí podrías notificar que la conexión está completamente lista
+                    // después de la negociación de MTU y el inicio del descubrimiento.
+                    // (La notificación de "conexión exitosa" ya se hizo en onConnectionStateChange,
+                    // pero podrías tener un estado más granular si lo necesitas)
+                    bluetoothStateManager.postConnectionSuccessful( // Esta llamada ya se hizo, pero si la moviste o necesitas un evento post-MTU
+                        currentDeviceName ?: gatt.device.address, gatt.device
+                    )
+                    startForegroundWithNotification("Conectado a ${currentDeviceName ?: gatt.device.address}") // Asegúrate que esto se llame en el momento adecuado
+                    handleDeviceNameLogicAndBroadcasts(
+                        gatt,
+                        "onMtuChanged_after_discoverServices_initiated"
+                    )
+                }
+            } else {
+                Log.w(
+                    "BluetoothService_GATT",
+                    "Error al cambiar MTU a $mtu para $deviceName, estado: $status. Usando MTU predeterminada."
+                )
+                // Incluso si el cambio de MTU falla, usualmente puedes continuar con el descubrimiento
+                // de servicios usando la MTU predeterminada (23 bytes).
+                // Si tu app *requiere* una MTU mayor, este sería un punto de fallo.
+                Log.d(
+                    "BluetoothService_GATT",
+                    "Cambio de MTU fallido, iniciando descubrimiento de servicios con MTU predeterminada para $deviceName"
+                )
+                if (!gatt.discoverServices()) {
+                    Log.e(
+                        "BluetoothService_GATT",
+                        "No se pudo iniciar el descubrimiento de servicios después del fallo de cambio de MTU para $deviceName."
+                    )
+                    // Manejar error
+                } else {
+                    bluetoothStateManager.postConnectionSuccessful( // Como arriba
+                        currentDeviceName ?: gatt.device.address, gatt.device
+                    )
+                    startForegroundWithNotification("Conectado a ${currentDeviceName ?: gatt.device.address}")
+                    handleDeviceNameLogicAndBroadcasts(
+                        gatt,
+                        "onMtuChanged_failed_after_discoverServices_initiated"
+                    )
+                }
             }
         }
     }

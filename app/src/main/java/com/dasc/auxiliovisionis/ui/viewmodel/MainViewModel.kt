@@ -55,6 +55,10 @@ class MainViewModel @Inject constructor(
     private val _speakRequest = kotlinx.coroutines.flow.MutableSharedFlow<String>(replay = 0) // Para eventos únicos
     val speakRequest: kotlinx.coroutines.flow.SharedFlow<String> = _speakRequest
 
+    val connectionStatusText: StateFlow<String> = bluetoothStateManager.connectionSuccessful
+        .map { it?.deviceDisplayName?.let { "Conectado a $it" } ?: "Desconectado" }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, "Desconectado")
+
     // Acciones
 
     init {
