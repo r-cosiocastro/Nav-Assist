@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SEND_SMS" />
@@ -77,18 +76,6 @@
                 <data android:scheme="sms" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.view.BluetoothDevicesActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AuxilioVisionis"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation|screenSize">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.view.MainActivity" />
-        </activity>
-
 
     </application>
 
