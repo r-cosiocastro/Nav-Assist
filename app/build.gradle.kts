@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.dasc.auxiliovisionis"
+    namespace = "com.rafaelcosio.navassist"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.dasc.auxiliovisionis"
+        applicationId = "com.rafaelcosio.navassist"
         minSdk = 29
         targetSdk = 36
         versionCode = 1

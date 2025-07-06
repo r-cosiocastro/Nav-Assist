@@ -1,5 +1,5 @@
--keepclassmembers class com.dasc.auxiliovisionis.data.remote.model.** { *; }
--keep class com.dasc.auxiliovisionis.data.remote.model.** { *; }
+-keepclassmembers class com.rafaelcosio.navassist.data.remote.model.** { *; }
+-keep class com.rafaelcosio.navassist.data.remote.model.** { *; }
 
 -keepattributes Signature
 -keepattributes *Annotation*

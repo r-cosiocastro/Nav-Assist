@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Auxilio Visionis</string>
+    <string name="app_name">Nav Assist</string>
     <string name="bluetooth_service_conectado">Dispositivo bluetooth conectado</string>
     <string name="bluetooth_service_channel_name">Servicio Bluetooth</string>
     <string name="bluetooth_service_channel_description">Notificaciones del servicio bluetooth</string>
